@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/pepinillojr/Projects/otroejemploopengl/ConsoleApp1/ConsoleApp1.csproj": {}
+    "/home/pepinillojr/Projects/raycaster-opengl/ConsoleApp1/ConsoleApp1.csproj": {}
   },
   "projects": {
-    "/home/pepinillojr/Projects/otroejemploopengl/ConsoleApp1/ConsoleApp1.csproj": {
+    "/home/pepinillojr/Projects/raycaster-opengl/ConsoleApp1/ConsoleApp1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/pepinillojr/Projects/otroejemploopengl/ConsoleApp1/ConsoleApp1.csproj",
+        "projectUniqueName": "/home/pepinillojr/Projects/raycaster-opengl/ConsoleApp1/ConsoleApp1.csproj",
         "projectName": "ConsoleApp1",
-        "projectPath": "/home/pepinillojr/Projects/otroejemploopengl/ConsoleApp1/ConsoleApp1.csproj",
+        "projectPath": "/home/pepinillojr/Projects/raycaster-opengl/ConsoleApp1/ConsoleApp1.csproj",
         "packagesPath": "/home/pepinillojr/.nuget/packages/",
-        "outputPath": "/home/pepinillojr/Projects/otroejemploopengl/ConsoleApp1/obj/",
+        "outputPath": "/home/pepinillojr/Projects/raycaster-opengl/ConsoleApp1/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/pepinillojr/.nuget/NuGet/NuGet.Config"

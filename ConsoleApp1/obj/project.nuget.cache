@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VAAxf4M6j1zfAnMk27RJQ4ui5eo1XP9UqgzcZbcOv3CgERP9GcSVFlixBU0fpJbjnb0r6Au5G8spPUQ8g3NRHg==",
+  "dgSpecHash": "w4EZmBi8zEuM7/x0fImBeFqRrHL+vNYdJbzm+/45SaPBcDMTUhQMdkgiBdY36fCLqCfiDzxKTJZsfJ9sZOWWMQ==",
   "success": true,
-  "projectFilePath": "/home/pepinillojr/Projects/otroejemploopengl/ConsoleApp1/ConsoleApp1.csproj",
+  "projectFilePath": "/home/pepinillojr/Projects/raycaster-opengl/ConsoleApp1/ConsoleApp1.csproj",
   "expectedPackageFiles": [
     "/home/pepinillojr/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/home/pepinillojr/.nuget/packages/microsoft.dotnet.platformabstractions/3.1.6/microsoft.dotnet.platformabstractions.3.1.6.nupkg.sha512",

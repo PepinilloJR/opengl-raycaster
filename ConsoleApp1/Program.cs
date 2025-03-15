@@ -9,7 +9,7 @@ using Silk.NET.OpenAL;
 using System.Runtime.CompilerServices;
 using Silk.NET.Vulkan;
 using Figuras;
-
+using Mapas;
 namespace EjemploSilk
 {
 
@@ -38,21 +38,9 @@ namespace EjemploSilk
 
          public static Muro muro = new Muro();
 
+        public static Mapa mapas = new Mapa();
 
-        public static int[][] map =[[1,1,1,1,1,1,1,1],
-                                    [1,0,0,1,0,0,0,1],
-                                    [1,0,0,1,0,1,0,1],
-                                    [1,0,0,1,0,0,0,1],
-                                    [1,1,0,0,0,0,0,1],
-                                    [1,1,1,0,0,1,1,1],
-                                    [1,0,0,0,0,0,0,1],
-                                    [1,1,1,1,1,1,1,1]];
-
-        public static List<float[]> longitudes_rayos = new List<float[]>();
-
-        public static float fov = 75f;
-
-        public static List<float[]> map_loaded = new List<float[]>();
+        public static Barra barra = new Barra();
 
         public static void Main(string[] args)
         {
@@ -61,7 +49,7 @@ namespace EjemploSilk
             WindowOptions options = WindowOptions.Default;
 
             options.Title = "Ejemplo ahora con input";
-            options.Size = new Vector2D<int>(800, 600);
+            options.Size = new Vector2D<int>(1024, 800);
             options.FramesPerSecond = 120;
             // creamos una ventana con las opciones elegidas
             ventana = Window.Create(options);
@@ -124,6 +112,14 @@ namespace EjemploSilk
                         anguloRotacion = anguloRotacion + (float)0.03;
                         if (anguloRotacion > 6.28) {
                             anguloRotacion = 0;
+                        }else if (anguloRotacion < -1) {
+                            anguloRotacion = 6.28f;
+                        }
+                    } else if (letra == 'q') {
+                        
+                        anguloRotacion = anguloRotacion - (float)0.03;
+                        if (anguloRotacion < -1) {
+                            anguloRotacion = 6.28f;
                         }
                     } 
                 };
@@ -224,24 +220,9 @@ namespace EjemploSilk
             rayo.Load(gL);
             figura.Load(gL);
             muro.Load(gL);
+            barra.Load(gL);
 
-            // crear posiciones
-
-            float[] inicio = [-1f, 1f];
-            for (int i = 0; i < map.Length; i++) { 
-                for (int j = 0; j < map[i].Length; j++) {
-                    if (map[i][j] == 1) {
-                        float x = inicio[0] + muro.size * 2 * j + 0.125f;
-                        float y = inicio[1] + muro.size * 2 * -i - 0.125f;
-                        map_loaded.Add([x, y]);
-                    }
-                    
-                }
-            }
-
-            foreach (float[] pos in map_loaded) {
-                Console.WriteLine($"{pos[0]} : {pos[1]} ");     
-            }
+            mapas.Load(muro);
         }
 
         public static void OnUpdate()
@@ -256,39 +237,32 @@ namespace EjemploSilk
         {
             // aqui si trabajamos con OpenGl  
             gL.Clear(ClearBufferMask.ColorBufferBit);
-            figura.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion, anguloRotacion, desX, desY);
+            //figura.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion, anguloRotacion, desX, desY);
             
 
-            foreach (float[] pos in map_loaded) {
-                muro.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion, 0, pos[0],  pos[1]);  
+            //foreach (float[] pos in mapas.map_loaded) {
+            //    muro.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion, 0, pos[0],  pos[1]);  
+            //}
+            mapas.desX = desX;
+            mapas.desY = desY;
+            mapas.anguloRotacion = anguloRotacion;
+            mapas.presicion = 0.0125f;
+            mapas.distancia = 1000;
+            mapas.CalcularColisiones();
+
+            mapas.DibujarCalculos(gL, rayo, program, ubicacionDeMatrizTraslacion, figura);
+            
+            float x = 2f / mapas.longitudes_rayos.ToArray().Length;
+            barra.xsize = x;
+            //Console.WriteLine(x);
+            float acumPosX = -1f;
+            foreach(float[] d in mapas.longitudes_rayos.ToArray()) {
+                barra.size = 1f / d[0];
+                barra.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion, 0f, acumPosX, 0f);
+                acumPosX += x;
+               
             }
 
-
-            double d = 0;
-            for (int i = 0; i < fov ; i++) {
-                float longitudRayo = 0;
-                // proceso de alargamiento radial :b re avanzado era
-                for (int j = 0; j < 200; j ++) {
-                    float posicionX = longitudRayo * 0.1f * (float)Math.Cos(anguloRotacion + (float)((fov - 1) * 0.0174533) + (float)d) + desX;
-                    float posicionY = longitudRayo * 0.1f * (float)Math.Sin(anguloRotacion + (float)((fov - 1) * 0.0174533) + (float)d) - desY;
-                    //Console.WriteLine($"X: {posicionX} : Y: {-posicionY}");
-                    
-                    var colision = map_loaded.Find(p => p[0] - 0.125f < posicionX && posicionX < p[0] + 0.125f && p[1] + 0.125f > -posicionY && -posicionY > p[1] - 0.125f);
-                    
-                    if (colision != null) {
-                        Console.WriteLine($"colision en {colision[0]}:{colision[1]}");
-                        j = 200;
-                    }
-
-                    longitudRayo = longitudRayo + 0.05f;
-                }
-                
-                //longitudes_rayos.Add([longitudRayo, anguloRotacion + (float)((fov - 1) * 0.0174533) + (float)d ]);
-                rayo.size = longitudRayo;
-                rayo.Dibujar(gL, PrimitiveType.Lines, program, ubicacionDeMatrizTraslacion, anguloRotacion + (float)((fov - 1) * 0.0174533) + (float)d, 0, 0, figura);
-                d += 0.0174533;
-                
-            }
         }   
 
         // este evento, se da cuando se cambia el tamaño o resolucion de la pantalla

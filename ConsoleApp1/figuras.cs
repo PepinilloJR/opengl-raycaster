@@ -320,4 +320,101 @@ namespace Figuras
             gL.DrawElements(type, (uint)indicesArray.Length, DrawElementsType.UnsignedInt, (void*)0);
         }
     }
+
+    public class Barra
+    {
+        public static uint vao;
+        public static uint vboVertexPositions;
+        public static uint vboVertexColors;
+
+        public static uint ebo;
+
+        public float[] verticesArray = [ 1f , 1f, 0,
+                                         1f,  -1f, 0,
+                                         -1f,  -1f, 0,
+                                         -1f,  1f, 0];
+        public uint[] indicesArray = [0, 1, 3, 
+                                      1, 2, 3 ];
+
+        public float[] coloresArray = [1.0f , 0.0f, 0.0f,1.0f,
+                                       1.0f , 0.0f, 0.0f,1.0f,
+                                       1.0f , 0.0f, 0.0f,1.0f,
+                                       1.0f , 0.0f, 0.0f,1.0f,];
+
+        public float size = 1f;
+        public float xsize = 0.02f;
+
+        public float desX = 0.0f;
+        public float desY = 0.0f;
+
+        public float[] Position = [0.0f, 0.0f];
+
+        public unsafe void Load(GL gL)
+        {
+            vao = gL.GenVertexArray();
+
+            gL.BindVertexArray(vao);
+            vboVertexPositions = gL.GenBuffer();
+            gL.BindBuffer(BufferTargetARB.ArrayBuffer, vboVertexPositions); 
+            fixed (float* buf = verticesArray)     
+            gL.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(verticesArray.Length * sizeof(float)), buf, BufferUsageARB.StaticDraw);
+
+            ebo = gL.GenBuffer();
+            gL.BindBuffer(BufferTargetARB.ElementArrayBuffer, ebo);
+
+            fixed (uint* buf = indicesArray)
+                gL.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(indicesArray.Length * sizeof(uint)), buf, BufferUsageARB.StaticRead);
+
+            const uint aPos = 0;
+            gL.EnableVertexAttribArray(0); 
+            gL.VertexAttribPointer(aPos, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), (void*)0);
+
+
+            const uint aColor = 1; 
+            vboVertexColors = gL.GenBuffer();
+            gL.BindBuffer(BufferTargetARB.ArrayBuffer, vboVertexColors);
+
+            
+            fixed (float* buf = coloresArray)
+                gL.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(coloresArray.Length * sizeof(float)), buf, BufferUsageARB.StaticDraw);
+
+
+            gL.EnableVertexAttribArray(aColor);
+
+            gL.VertexAttribPointer(aColor, 4, VertexAttribPointerType.Float, false, 4 * sizeof(float), (void*)0);
+
+            gL.BindVertexArray(0); 
+            gL.BindBuffer(BufferTargetARB.ArrayBuffer, 0); 
+            gL.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0); 
+
+        }
+
+        public unsafe void Dibujar(GL gL, PrimitiveType type, uint program, int ubicacionDeMatrizTraslacion,float anguloRotacion, float desX, float desY)
+        {
+            // ahora, vamos a tomar un VAO, el VAO que configuramos antes tiene guardado
+            // todas las configuraciones para el programa de los shaders
+            gL.BindVertexArray(vao);
+
+            // usamos el programa de los shaders que hicimos, el vao usara los parametros que le dijimos
+            gL.UseProgram(program);
+            this.desX = desX;
+            this.desY = desY;
+
+            float coseno = MathF.Cos((float)anguloRotacion);
+            float seno = MathF.Sin((float)anguloRotacion);
+
+            // openGl toma la columna mayor para las transformaciones
+            // osea, las transformaciones las aplicamos en la ultima fila
+
+            float[] translationMatrix = {
+                coseno * xsize, -seno * xsize, 0.0f, 0.0f,
+                seno * size, coseno * size, 0f, 0.0f,
+                0.0f, 0f, 1.0f, 0.0f,
+                desX, desY, 0.0f, 1.0f
+            };
+            gL.UniformMatrix4(ubicacionDeMatrizTraslacion, false, translationMatrix);
+
+            gL.DrawElements(type, (uint)indicesArray.Length, DrawElementsType.UnsignedInt, (void*)0);
+        }
+    }
 }
