@@ -27,6 +27,7 @@ namespace EjemploSilk
         public static uint program;
 
         public static int ubicacionDeMatrizTraslacion;
+        public static int ubicacionVectorColor;
 
         public static float desX = 0.0f;
         public static float desY = 0.0f;
@@ -152,12 +153,13 @@ namespace EjemploSilk
                 layout (location = 1) in vec4 aColor;
 
                 uniform mat4 traslationMatrix;
+                uniform vec4 colorVectorTransformation;
 
                 out vec4 vertexColor;
                 void main()
                 {
                 gl_Position = traslationMatrix * vec4(aPos, 1.0);
-                vertexColor = aColor;
+                vertexColor = aColor * colorVectorTransformation;
                 }";
 
             const string fragmentCode = @"
@@ -210,7 +212,7 @@ namespace EjemploSilk
             // para guardar la matriz de desplazamiento, para poder acceder a ella mas adelannte
             // en el OnRender
             ubicacionDeMatrizTraslacion = gL.GetUniformLocation(program, "traslationMatrix");
-
+            ubicacionVectorColor = gL.GetUniformLocation(program, "colorVectorTransformation");
             // una vez el programa esta linkeado, ya no hace falta que tengamos atacheados los shaders
             gL.DetachShader(program, vertexShader);
             gL.DetachShader(program, fragmentShader);
@@ -250,15 +252,16 @@ namespace EjemploSilk
             mapas.distancia = 1000;
             mapas.CalcularColisiones();
 
-            mapas.DibujarCalculos(gL, rayo, program, ubicacionDeMatrizTraslacion, figura);
+            //mapas.DibujarCalculos(gL, rayo, program, ubicacionDeMatrizTraslacion, figura);
             
             float x = 2f / mapas.longitudes_rayos.ToArray().Length;
-            barra.xsize = x;
+            barra.xsize = x / 2;
             //Console.WriteLine(x);
             float acumPosX = -1f;
             foreach(float[] d in mapas.longitudes_rayos.ToArray()) {
+
                 barra.size = 1f / d[0];
-                barra.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion, 0f, acumPosX, 0f);
+                barra.Dibujar(gL, PrimitiveType.Triangles, program, ubicacionDeMatrizTraslacion,ubicacionVectorColor, 0f, acumPosX, 0f);
                 acumPosX += x;
                
             }

@@ -22,7 +22,7 @@ namespace Mapas
 
         public List<float[]> longitudes_rayos = new List<float[]>();
 
-        public float fov = 75f;
+        public float fov = 120f;
 
         public List<float[]> map_loaded = new List<float[]>();
 

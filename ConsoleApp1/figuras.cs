@@ -336,10 +336,10 @@ namespace Figuras
         public uint[] indicesArray = [0, 1, 3, 
                                       1, 2, 3 ];
 
-        public float[] coloresArray = [1.0f , 0.0f, 0.0f,1.0f,
-                                       1.0f , 0.0f, 0.0f,1.0f,
-                                       1.0f , 0.0f, 0.0f,1.0f,
-                                       1.0f , 0.0f, 0.0f,1.0f,];
+        public float[] coloresArray = [1.0f , 1.0f, 1.0f,1.0f,
+                                       1.0f , 1.0f, 1.0f,1.0f,
+                                       1.0f , 1.0f, 1.0f,1.0f,
+                                       1.0f , 1.0f, 1.0f,1.0f,];
 
         public float size = 1f;
         public float xsize = 0.02f;
@@ -389,7 +389,7 @@ namespace Figuras
 
         }
 
-        public unsafe void Dibujar(GL gL, PrimitiveType type, uint program, int ubicacionDeMatrizTraslacion,float anguloRotacion, float desX, float desY)
+        public unsafe void Dibujar(GL gL, PrimitiveType type, uint program, int ubicacionDeMatrizTraslacion, int ubicacionVectorColor,float anguloRotacion, float desX, float desY)
         {
             // ahora, vamos a tomar un VAO, el VAO que configuramos antes tiene guardado
             // todas las configuraciones para el programa de los shaders
@@ -412,7 +412,11 @@ namespace Figuras
                 0.0f, 0f, 1.0f, 0.0f,
                 desX, desY, 0.0f, 1.0f
             };
+
+            float[] colorVector = { size, size, size, 1f};
+            
             gL.UniformMatrix4(ubicacionDeMatrizTraslacion, false, translationMatrix);
+            gL.Uniform4(ubicacionVectorColor, colorVector);
 
             gL.DrawElements(type, (uint)indicesArray.Length, DrawElementsType.UnsignedInt, (void*)0);
         }
